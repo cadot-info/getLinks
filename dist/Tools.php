@@ -20,6 +20,7 @@ namespace CadotInfo;
 use DOMDocument;
 use Zenstruck\Browser\Test\HasBrowser;
 
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
 trait Tools
 {
@@ -27,36 +28,49 @@ trait Tools
 
     //, $client = false, $urlTwoPoints = null, $urlPoint = null, array $nolinks = [], array $classRefuse = [], array $links = []
 
-    public function returnAllLinks(string $start, int $descent = 0, array $opts, $client = null, array $links = []): array
+    public function returnAllLinks(string $start, int $descent = 0, array $options = [], array $links = [])
     {
-        //init default value
-        $init['urlTwoPoints'] = ['mailto', 'http', 'https', 'javascript'];
-        $init['urlPoint'] = ['www'];
-        $init['classRefuse'] = [];
-        $init['nolinks'] = [];
+        /* ------------------------------ default value ----------------------------- */
+        $opts = [
+            'urlTwoPoints' => ['mailto',  'javascript'],
+            'urlPoint' => [],
+            'classRefuse' => [],
+            'nolinks' => [],
+            'noStart' => [],
+            'passRefuse' => false
+        ];
+        foreach ($opts as $key => $value)
+            if (isset($options[$key]) && $options[$key] != null) $opts[$key] = $options[$key];
         $exlinks = $links;
-        if (!$client) $client = $this->browser()->get($start);
-        //see links of the page
-        $liens = $client->response->assertHtml()->crawler();
         $htmlDom = new DOMDocument;
-        //Parse the HTML of the page using DOMDocument::loadHTML
-        @$htmlDom->loadHTML($liens);
-        //Extract the links from the HTML.
-        //$links = $htmlDom->getElementsByTagName('a');
+        if (substr($start, 0, strlen('<!DOCTYPE html>')) == '<!DOCTYPE html>')
+            $htmlDom->loadHTML($start);
+        else
+            @$htmlDom->loadHTMLFile($start); // pass if error
         foreach ($htmlDom->getElementsByTagName('a') as $link) { // no get link without href
-            if ($link->hasAttribute('href'))
-                if ($link->getAttribute('href') != '' && !in_array($link->getAttribute('href'), $opts['nolinks'])) {
-                    /** @var DOMElement $link */
-                    $url = $link->getAttribute('href');
-                    // pass link exist and if has not the class, not in urlpoint and urlTwoPoints
-                    if (!in_array(explode(':', $url)[0], $opts['urlTwoPoints']) && (!in_array(explode('.', $url)[0], $opts['urlPoint'])) &&  !isset($exlinks[$url]) && count(array_intersect($opts[']classRefuse'], explode(' ', $link->getAttribute('class')))) == 0 && substr($url, 0, 1) != '#' && substr($url, 0, strlen('/_profiler/')) != '/_profiler/') {
-                        if ($descent > 0) { // si on est dans une récursivité acceptée
-                            $links = $this->returnAllLinks($url, $descent - 1, $client, $opts, $links);
-                        } else {
-                            $links[$url] = trim(preg_replace('/\s+/', ' ', str_replace(array("\n", "\r", ""), '', $link->nodeValue)));
-                        }
-                    }
+            if ($link->hasAttribute('href')) {
+                $url = $link->getAttribute('href');
+                $refuse = false;
+                if (
+                    $url == '' || //href?
+                    in_array($url, $opts['nolinks']) || //link forbidden?
+                    in_array(explode(':', $url)[0], $opts['urlTwoPoints']) || //before : for mailto for example
+                    in_array(explode('.', $url)[0], $opts['urlPoint']) ||  // before . for http://noThisDomain for example
+                    isset($exlinks[$url])  || //i have this link
+                    count(array_intersect($opts['classRefuse'], explode(' ', $link->getAttribute('class')))) > 0 // no this class
+                )
+                    $refuse = true;
+                if ($refuse == false)
+                    foreach ($opts['noStart'] as $start)
+                        if (substr($url, 0, strlen($start)) == $start) //not start
+                            $refuse = true;
+
+                if ($descent > 0) { // for test level in recurivity
+                    if ($opts['passRefuse'] == true || $refuse == false) $links = $this->returnAllLinks($url, $descent - 1, $opts, $links);
+                } else {
+                    if ($refuse == false) $links[$url] = trim(preg_replace('/\s+/', ' ', str_replace(array("\n", "\r", ""), '', $link->nodeValue)));
                 }
+            }
         }
         return $links;
     }
