@@ -1,51 +1,33 @@
-# Tools <img align="right" width="100" height="100" src="https://avatars.githubusercontent.com/u/68180174?s=80 ">
+# Get All Links of web page or html string
 
-## Functions
-
-### returnAllLinks
-
-Testing for Panther and Web test Case
 Return a array of url links of page and sub-page:
 
 **_example:_**
-`$links=$this->returnAllLinks('/');`
-or
+`$links=$this->returnAllLinks('https://github.com');`
 
-```php
-$client = static::createPantherClient();
-$liens = $this->returnAllLinks('/compte', 0, $client, null, null, ['bigpicture']);
-```
+or by html
 
-> - string $start url of start seek
-> - int $descent number or sub links
-> - array $urlTwoPoints extract before : , example mailto, htpp..., default: 'mailto', 'http', 'https'
-> - array $urlPoint extract before first point , example www, default 'www'
-> - array $nolinks for ignore the links in the array (example logout ;-)
-> - array $classRefuse don't take link if class is in this array. It's for js for example
-> - array|boolean $client send a client if you have login for example
-> - array $links for recursivity
+`$links = $this->returnAllLinks($html);`
 
-#### Ignore links
+### Many options
 
-- the anchor links (#...)
-- link begin by "/\_profiler/"
-
-### function E
-
-Return a immediatly message
-
-> -E(message)
+-urlTwoPoints => refuse the links before : ,for example with mailto,javascript,..
+-urlPoint => refuse the links before . ,for example https://github.
+-classRefuse => refuse the links with this classes, example: bigpicture button ...
+-nolinks => refuse this links for example https:github.com, www.google.com ...
+-noStart => refuse link start for example /profiler, http://google
+-passRefuse => if true, if a link is refused, the code seek in this link for recursivity
 
 ## Utilisation
 
 use by traits
 
 ```php
-use CadotInfo\Tools;
+use CadotInfo\getLinks;
 
-class ClientTest extends PantherTestCase
+class ...
 {
-   use Tools;
+   use getLinks;
    ...
    $liens = $this->returnAllLinks('/', 1, null, ['mailto',  'javascript'], [''], ['bigpicture']);
         foreach ($liens as $url => $texte) {

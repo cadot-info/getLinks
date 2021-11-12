@@ -4,31 +4,26 @@
  *
  *
  *-------------------------------------------------------------------------- *
- *      Tools.php *
+ *      getLinksTrait.php *
  * -------------------------------------------------------------------------- *
  *
  * Usage:
- * - composer require cadot.info/symfony-testing-tools
- * - use CadotInfo\Tools;
- * - in the class: use Tools;
+ * - composer require cadot.info/getLinks
+ * - use CadotInfo\getLinks;
+ * - in the class: use getLinks;
  *
- * Source on: https://github.com/cadot-info/tools
+ * Source on: https://github.com/cadot-info/getLinks
  */
 
 namespace CadotInfo;
 
+use Exception;
+
 use DOMDocument;
-use Zenstruck\Browser\Test\HasBrowser;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
-
-trait Tools
+trait getLinks
 {
-    use HasBrowser;
-
-    //, $client = false, $urlTwoPoints = null, $urlPoint = null, array $nolinks = [], array $classRefuse = [], array $links = []
-
-    public function returnAllLinks(string $start, int $descent = 0, array $options = [], array $links = [])
+    public function getLinks(string $start, int $descent = 0, array $options = [], array $links = [])
     {
         /* ------------------------------ default value ----------------------------- */
         $opts = [
@@ -39,6 +34,12 @@ trait Tools
             'noStart' => [],
             'passRefuse' => false
         ];
+        // verify optioons exis
+        if (count($options) > 0)
+            if (count(array_intersect_key($options, $opts)) == 0)
+                return new Exception('An option is not recognized');
+
+
         foreach ($opts as $key => $value)
             if (isset($options[$key]) && $options[$key] != null) $opts[$key] = $options[$key];
         $exlinks = $links;
@@ -66,7 +67,7 @@ trait Tools
                             $refuse = true;
 
                 if ($descent > 0) { // for test level in recurivity
-                    if ($opts['passRefuse'] == true || $refuse == false) $links = $this->returnAllLinks($url, $descent - 1, $opts, $links);
+                    if ($opts['passRefuse'] == true || $refuse == false) $links = $this->getLinks($url, $descent - 1, $opts, $links);
                 } else {
                     if ($refuse == false) $links[$url] = trim(preg_replace('/\s+/', ' ', str_replace(array("\n", "\r", ""), '', $link->nodeValue)));
                 }
