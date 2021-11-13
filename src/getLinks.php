@@ -58,7 +58,7 @@ function getLinks(string $start, int $descent = 0, array $options = [], array $l
         if (isset($options[$key]) && $options[$key] != null) $opts[$key] = $options[$key];
     $exlinks = $links;
     $htmlDom = new DOMDocument;
-    if (substr($start, 0, strlen('<!DOCTYPE html>')) == '<!DOCTYPE html>')
+    if (substr($start, 0, strlen('<!DOCTYPE html>')) == '<!DOCTYPE html>' || substr($start, 0, strlen('<html')) == '<html')
         $htmlDom->loadHTML($start);
     else
         @$htmlDom->loadHTMLFile($start); // pass if error
