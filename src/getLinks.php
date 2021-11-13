@@ -58,6 +58,7 @@ function getLinks(string $start, int $descent = 0, array $options = [], array $l
         if (isset($options[$key]) && $options[$key] != null) $opts[$key] = $options[$key];
     $exlinks = $links;
     $htmlDom = new DOMDocument;
+    libxml_use_internal_errors(true);
     if (substr($start, 0, strlen('<!DOCTYPE html>')) == '<!DOCTYPE html>' || substr($start, 0, strlen('<html')) == '<html')
         $htmlDom->loadHTML($start);
     else
@@ -87,5 +88,6 @@ function getLinks(string $start, int $descent = 0, array $options = [], array $l
             }
         }
     }
+    libxml_clear_errors();
     return $links;
 }
