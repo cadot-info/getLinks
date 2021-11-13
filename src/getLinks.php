@@ -37,7 +37,7 @@ use DOMDocument;
  * -noStart => refuse link start for example /profiler, http://google
  * -passRefuse => if true, if a link is refused, the code seek in this link for recursivity
  */
-function getLinks(string $start, int $descent = 0, array $options = [], array $links = []): array
+function getLinks(string $start, int $descent = 0, array $options = [], array $links = [])
 {
     /* ------------------------------ default value ----------------------------- */
     $opts = [
