@@ -9,7 +9,9 @@ or by html
 
 `$links = $this->returnAllLinks($html);`
 
-### Many options
+## Utilisation
+
+getLinks(start url, int levels, array of $options, array of $links)
 
 -urlTwoPoints => refuse the links before : ,for example with mailto,javascript,..
 -urlPoint => refuse the links before . ,for example https://github.
@@ -18,18 +20,14 @@ or by html
 -noStart => refuse link start for example /profiler, http://google
 -passRefuse => if true, if a link is refused, the code seek in this link for recursivity
 
-## Utilisation
-
-use by traits
-
 ```php
-use CadotInfo\getLinks;
+use function CadotInfo\getLinks;
 
 class ...
 {
    use getLinks;
    ...
-   $liens = $this->returnAllLinks('/', 1, null, ['mailto',  'javascript'], [''], ['bigpicture']);
+   $liens = getLinks('wwwh.goole.fr', 1,);
         foreach ($liens as $url => $texte) {
             dump("Test url:$url(texte)");
    ...
