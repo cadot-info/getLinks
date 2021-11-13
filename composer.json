@@ -1,5 +1,5 @@
 {
-  "name": "cadot.info/getLinks",
+  "name": "cadot.info/getlinks",
   "description": "Library for get a array links of website for testing",
   "type": "library",
   "require": {
