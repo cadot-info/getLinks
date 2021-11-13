@@ -1,8 +1,8 @@
 version: '3'
 services:
-  cadot.info-testTools:
+  cadot.info-getLinks:
     image: cadotinfo/symfony5
-    container_name: cadot.info-testTools
+    container_name: cadot.info-getLinks
     volumes:
       - .:/app
     networks:
