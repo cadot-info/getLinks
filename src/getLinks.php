@@ -22,17 +22,13 @@ use DOMDocument;
 
 /**
  * getLinks
+ * 
  * Options accepted
  * - urlTwoPoints => refuse the links before : ,for example with mailto,javascript,..
- * 
  * - urlPoint => refuse the links before . ,for example https://github.
- * 
  * - classRefuse => refuse the links with this classes, example: bigpicture button ...
- * 
  * - nolinks => refuse this links for example https:github.com, www.google.com ...
- * 
  * - noStart => refuse link start for example /profiler, http://google
- * 
  * - passRefuse => if true, if a link is refused, the code seek in this link for recursivity
  * 
  * @param  string start url
