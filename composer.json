@@ -1,6 +1,6 @@
 {
   "name": "cadot.info/getlinks",
-  "description": "Library for get a array links of website for testing",
+  "description": "Library for get a array links of website",
   "type": "library",
   "require": {
     "php": ">=7.1"
