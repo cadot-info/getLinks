@@ -13,12 +13,12 @@ or by html
 
 getLinks(start url, int levels, array of $options, array of $links)
 
--urlTwoPoints => refuse the links before : ,for example with mailto,javascript,..
--urlPoint => refuse the links before . ,for example https://github.
--classRefuse => refuse the links with this classes, example: bigpicture button ...
--nolinks => refuse this links for example https:github.com, www.google.com ...
--noStart => refuse link start for example /profiler, http://google
--passRefuse => if true, if a link is refused, the code seek in this link for recursivity
+-2points => refuse the links before : ,for example with mailto,javascript,..
+-point => refuse the links before . ,for example https://github.
+-class => refuse the links with this classes, example: bigpicture button ...
+-link => refuse this links for example https:github.com, www.google.com ...
+-start => refuse link start for example /profiler, http://google
+-pass => if true, if a link is refused, the code seek in this link for recursivity
 
 ```php
 use function CadotInfo\getLinks;

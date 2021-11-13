@@ -24,12 +24,12 @@ use DOMDocument;
  * getLinks
  * 
  * Options accepted
- * - urlTwoPoints => refuse the links before : ,for example with mailto,javascript,..
- * - urlPoint => refuse the links before . ,for example https://github.
- * - classRefuse => refuse the links with this classes, example: bigpicture button ...
- * - nolinks => refuse this links for example https:github.com, www.google.com ...
- * - noStart => refuse link start for example /profiler, http://google
- * - passRefuse => if true, if a link is refused, the code seek in this link for recursivity
+ * - 2points => refuse the links before : ,for example with mailto,javascript,..
+ * - point => refuse the links before . ,for example https://github.
+ * - class => refuse the links with this classes, example: bigpicture button ...
+ * - link => refuse this links for example https:github.com, www.google.com ...
+ * - start => refuse link start for example /profiler, http://google
+ * - pass => if true, if a link is refused, the code seek in this link for recursivity
  * 
  * @param  string start url
  * @param  int    level for seek
@@ -43,12 +43,12 @@ function getLinks(string $start, int $descent = 0, array $options = [], array $l
 {
     /* ------------------------------ default value ----------------------------- */
     $opts = [
-        'urlTwoPoints' => ['mailto',  'javascript'],
-        'urlPoint' => [],
-        'classRefuse' => [],
-        'nolinks' => [],
-        'noStart' => [],
-        'passRefuse' => false
+        '2points' => ['mailto',  'javascript'],
+        'point' => [],
+        'class' => [],
+        'link' => [],
+        'start' => [],
+        'pass' => false
     ];
     // verify optioons exis
     if (count($options) > 0)
@@ -71,20 +71,20 @@ function getLinks(string $start, int $descent = 0, array $options = [], array $l
             $refuse = false;
             if (
                 $url == '' || //href?
-                in_array($url, $opts['nolinks']) || //link forbidden?
-                in_array(explode(':', $url)[0], $opts['urlTwoPoints']) || //before : for mailto for example
-                in_array(explode('.', $url)[0], $opts['urlPoint']) ||  // before . for http://noThisDomain for example
+                in_array($url, $opts['link']) || //link forbidden?
+                in_array(explode(':', $url)[0], $opts['2points']) || //before : for mailto for example
+                in_array(explode('.', $url)[0], $opts['point']) ||  // before . for http://noThisDomain for example
                 isset($exlinks[$url])  || //i have this link
-                count(array_intersect($opts['classRefuse'], explode(' ', $link->getAttribute('class')))) > 0 // no this class
+                count(array_intersect($opts['class'], explode(' ', $link->getAttribute('class')))) > 0 // no this class
             )
                 $refuse = true;
             if ($refuse == false)
-                foreach ($opts['noStart'] as $start)
+                foreach ($opts['start'] as $start)
                     if (substr($url, 0, strlen($start)) == $start) //not start
                         $refuse = true;
 
             if ($descent > 0) { // for test level in recurivity
-                if ($opts['passRefuse'] == true || $refuse == false) $links = getLinks($url, $descent - 1, $opts, $links);
+                if ($opts['pass'] == true || $refuse == false) $links = getLinks($url, $descent - 1, $opts, $links);
             } else {
                 if ($refuse == false) $links[$url] = trim(preg_replace('/\s+/', ' ', str_replace(array("\n", "\r", ""), '', $link->nodeValue)));
             }
